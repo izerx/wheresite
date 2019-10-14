@@ -1,0 +1,58 @@
+{% load staticfiles %}
+<section id="main" class="h-100">
+  <div class="container-fluid h-100">
+    <div class="row h-100 anim-div">
+      <div id='map' class="w-100 h-100"></div>
+    </div>
+  </div>
+</section>
+
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.4.1/mapbox-gl.js'></script>
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiemVyeCIsImEiOiJjazFxbWQ2ODgwNGF0M29zeHppbTFjbTJ2In0.9Iz8pB842FcFaVU4tWgwww';
+var map = new mapboxgl.Map({
+container: 'map',
+style: 'mapbox://styles/mapbox/light-v10',
+center: [0, 40],
+zoom: 1
+});
+
+map.on('load', function () {
+
+map.addLayer({
+  "id": "points",
+  "type": "symbol",
+  "source": {
+    "type": "geojson",
+    "data": {
+      "type": "FeatureCollection",
+      "features": [
+        {% for link in links %}
+        {
+          "type": "Feature",
+          "geometry": {
+          "type": "Point",
+          "coordinates": [{{ link.longitude }}, {{ link.latitude}}]
+          },
+          "properties": {
+            "title": "{{ link.host }}"
+          }
+        },
+        {% endfor %}
+      ]
+  }
+  },
+  "layout": {
+  "icon-image": "{icon}-15",
+  "text-field": "{title}",
+  "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+  "text-offset": [0, 0.6],
+  "text-anchor": "top",
+  'icon-allow-overlap': true,
+  'icon-ignore-placement': true,
+  }
+  });
+
+});
+</script>

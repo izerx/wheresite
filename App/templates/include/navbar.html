@@ -1,0 +1,26 @@
+<!--Navbar -->
+<nav class="navbar nav-sticky navbar-expand-lg fixed-top white-color z-depth-1">
+  <div class="container">
+    <a class="navbar-brand" href="#">WhereSite</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4"
+      aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent-4">
+      <ul class="navbar-nav w-100">
+        <div class="col-8 d-flex align-items-center">
+          <input type="text" class="cu__input {% if is_error %}is_invalid{% endif %}" name="cu__input" autofocus="true" id="cu__input">
+        </div>
+        <div class="col-2">
+          <button type="button" name="button" id="cut_url__button" class="btn btn-primary rounded mx-auto" onclick="get_points()">Go</button>
+        </div>
+        <di class="col-2">
+          <a class="nav-link btn btn-outline-primary" href="https://github.com/CoderMan2016/cuturl/tree/master" target="_blank">
+            <span class="fa-lg"><i class="fa-lg fab fa-github"></i> GitHub</span>
+          </a>
+        </di>
+      </ul>
+    </div>
+  </div>
+</nav>
+<!--/.Navbar -->
