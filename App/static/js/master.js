@@ -1,5 +1,3 @@
-AOS.init();
-
 function show_error_notification(){
   notification = $('.notification')
 
