@@ -3,10 +3,10 @@ from django.template import loader
 from django.template.base import Template
 from django.http import HttpResponse
 import geoip2.database
-import socket
+from socket import gethostbyname
 import requests
 from bs4 import BeautifulSoup
-from django.template.defaulttags import register
+from urllib.parse import urlparse
 
 def get_links(url):
     html = requests.get(url).text
@@ -25,31 +25,11 @@ def outside_links(soup):
 
 def get_coords(url):
     reader = geoip2.database.Reader('App/GeoLite2-City.mmdb')
-    response = reader.city(socket.gethostbyname(url))
+    response = reader.city(gethostbyname(url))
     return response.location.latitude, response.location.longitude
 
 def get_host_of_url(url):
-    url = url.replace('//', '.')
-    url_arr = url.split('.')[1:]
-    url_fix = []
-    domen = ''
-    for el in url_arr:
-        if '/' not in el:
-            url_fix.append(el)
-        else:
-            for i in el:
-                if i == '/':
-                    break
-                else:
-                    domen += i
-    url_fix.append(domen)
-    try:
-        url_fix.remove('www')
-    except Exception:
-        pass
-
-    return '.'.join(url_fix)
-
+    return '{uri.netloc}'.format(uri=urlparse(url))
 
 def parse_page(url):
     response = []
