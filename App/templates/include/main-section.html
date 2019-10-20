@@ -9,6 +9,13 @@
 
 <script src='https://api.mapbox.com/mapbox-gl-js/v1.4.1/mapbox-gl.js'></script>
 
+{% if save_url or url %}
+<script>
+  document.getElementById('cu__input').value = '{{url}}'
+  window.history.pushState({},"", '/results/{{save_url}}')
+</script>
+{% endif %}
+
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoiemVyeCIsImEiOiJjazFxbWQ2ODgwNGF0M29zeHppbTFjbTJ2In0.9Iz8pB842FcFaVU4tWgwww';
 var map = new mapboxgl.Map({
