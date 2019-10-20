@@ -7,6 +7,10 @@ from socket import gethostbyname
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
+from .models import Results
+from random import choice
+from string import ascii_lowercase
+from json import loads
 
 def get_links(url):
     html = requests.get(url).text
@@ -34,19 +38,47 @@ def get_host_of_url(url):
 def parse_page(url):
     response = []
     links = get_links(url)
+    coords = []
 
     for link in links:
         try:
-            response.append({'link': link, 'host': get_host_of_url(link), 'latitude': get_coords(get_host_of_url(link))[0], 'longitude': get_coords(get_host_of_url(link))[1]})
+            coord = [get_coords(get_host_of_url(link))[0], get_coords(get_host_of_url(link))[1]]
+            if coord not in coords:
+                response.append({
+                    'link': link,
+                    'host': get_host_of_url(link),
+                    'latitude': coord[0],
+                    'longitude': coord[1]
+                })
+                coords.append(coord)
         except Exception:
             continue
-
+        
     return response
+
+
+def generate_save_url():
+    save_url = ''.join(choice(ascii_lowercase) for i in range(6))
+    return save_url if check_availability_save_url(save_url) else generate_save_url()
+
+def check_availability_save_url(url):
+    return False if Results.objects.filter(url = url).count() > 0 else True
+
+def create_results(response, url):
+    return Results.objects.create(url = url, save_url = generate_save_url(), points = response)
+
+def show_results(request, save_url):
+    result = Results.objects.get(save_url = save_url)
+    links = result.points[1:-1].replace('}, ', '}|').split('|')
+
+    return render(request, 'index.html', {'links': [loads(link.replace("'", '"')) for link in links], 'url': result.url, 'save_url': result.save_url})
 
 def index(request):
     if request.is_ajax():
-        url = request.POST.get('url')
+        parse_links = parse_page(request.POST.get('url'))
 
-        return HttpResponse(loader.get_template('include/main-section.html').render({'links': parse_page(url)}, request))
+        results = create_results(parse_links, request.POST.get('url'))
+
+        return HttpResponse(loader.get_template('include/main-section.html').render({'links': parse_links, 'save_url': results.save_url, 'url': request.POST.get('url')}, request))
 
     return render(request, 'index.html')
